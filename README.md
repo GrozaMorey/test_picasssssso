@@ -12,9 +12,15 @@ Endpoints
 с запросом body по формату
 ```json
 {
-  "file":file
+  "file": form_file
 }
 ```
+
+Пример:
+```curl
+curl --location '83.222.11.20/api/v1/upload/' --form 'file=@"/C:/Users/user/Downloads/test.jpeg"'
+```
+
 Затем запускает celery task в зависимости от расширения
 
 ***files/*** - Принимает только GET запросы и возвращает список
