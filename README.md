@@ -12,7 +12,7 @@ Endpoints
 с запросом body по формату
 ```json
 {
-  "file":"name_of_file"
+  "file":file
 }
 ```
 Затем запускает celery task в зависимости от расширения
