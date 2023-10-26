@@ -6,6 +6,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from .models import File
 from .tasks import RouterTask
 from rest_framework.request import Request
+from django.core.cache import cache
 
 
 class UploadApiView(APIView):
@@ -31,12 +32,17 @@ class UploadApiView(APIView):
 
 class FilesApiView(APIView):
     def get(self, request: Request) -> Response:
+        file_cache = cache.get("filesApi")
+        if file_cache:
+            return Response(file_cache)
+
         files = File.objects.all()
         serializer = FileSerializer(files, many=True)
+        cache.set("filesApi", serializer.data, 30)
         return Response(serializer.data)
 
 
-class Api_info(APIView):
+class InfoApi(APIView):
 
-    def get(self, request):
+    def get(self, request: Request) -> Response:
         return Response({"upload/": "POST", "files/": "GET"}, status=status.HTTP_200_OK)

@@ -7,6 +7,5 @@ RUN pip install -r requirements.txt
 
 COPY . /app
 WORKDIR /app
+CMD ["bash", "-c", "'python manage.py migrate && python manage.py createcachetable && gunicorn --bind :8000 --workers 3 services.wsgi:application'"]
 
-CMD ["python", "manage.py", "migrate"]
-CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "services.wsgi:application"]

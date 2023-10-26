@@ -20,7 +20,6 @@ from django.urls import path, include
 handler405 = 'services.file_handler.errors.tr_handler405'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('api/v1/', include("file_handler.urls")),
 
 ]

@@ -57,10 +57,12 @@ class RouterTask:
     }
 
     def __init__(self, file: FileSerializer):
-        self.extension = file.data.get("file").split(".")[-1].lower()
+        name = file.data.get("file").lower()
+        self.extension = name[name.rindex(".") + 1:]
         self.file_id = file.data.get("id")
 
     def delay(self):
+        pass
         if self.extension in self.routers:
             self.routers[self.extension].delay(self.file_id)
         else:

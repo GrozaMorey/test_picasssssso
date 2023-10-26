@@ -51,7 +51,7 @@ services:
     networks:
       - net
     healthcheck:
-      test: redis-cli ping
+      test: redis-cli ping | grep PONG
       interval: 10s
       timeout: 10s
       retries: 5
@@ -78,3 +78,10 @@ services:
         condition: service_healthy
     networks:
       - net
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx.conf.d/app.conf
+    ports:
+      - 80:80
