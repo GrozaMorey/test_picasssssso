@@ -7,7 +7,7 @@ from .serializers import FileSerializer
 @shared_task
 def image(file_id: int):
     file = File.objects.get(id=file_id)
-    time.sleep(20)
+    time.sleep(5)
     file.processed = True
     file.save()
 
@@ -15,7 +15,7 @@ def image(file_id: int):
 @shared_task
 def docx(file_id: int):
     file = File.objects.get(id=file_id)
-    time.sleep(10)
+    time.sleep(5)
     file.processed = True
     file.save()
 
@@ -23,7 +23,7 @@ def docx(file_id: int):
 @shared_task
 def pdf(file_id: int):
     file = File.objects.get(id=file_id)
-    time.sleep(15)
+    time.sleep(5)
     file.processed = True
     file.save()
 
@@ -50,6 +50,7 @@ class RouterTask:
     routers = {
         "png": image,
         "jpeg": image,
+        "jpg": image,
         "docx": docx,
         "pdf": pdf,
         "txt": txt,

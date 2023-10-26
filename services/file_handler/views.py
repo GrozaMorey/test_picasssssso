@@ -12,7 +12,7 @@ class UploadApiView(APIView):
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = FileSerializer
 
-    def post(self, request: Request, *args, **kwargs) -> Response:
+    def post(self, request: Request) -> Response:
         file = self.serializer_class(data=request.data)
 
         if file.is_valid():
@@ -34,3 +34,9 @@ class FilesApiView(APIView):
         files = File.objects.all()
         serializer = FileSerializer(files, many=True)
         return Response(serializer.data)
+
+
+class Api_info(APIView):
+
+    def get(self, request):
+        return Response({"upload/": "POST", "files/": "GET"}, status=status.HTTP_200_OK)

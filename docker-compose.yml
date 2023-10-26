@@ -11,7 +11,6 @@ services:
     build:
       context: ./services
       dockerfile: ./Dockerfile
-    command: ash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     env_file:
       - services/.env
     volumes:
@@ -19,8 +18,11 @@ services:
     ports:
       - "8000:8000"
     depends_on:
+      worker:
+        condition: service_healthy
       db:
         condition: service_healthy
+
     networks:
       - net
 
@@ -42,11 +44,17 @@ services:
       timeout: 10s
       retries: 5
 
+
   redis:
     image: redis:7-alpine
     hostname: redis
     networks:
       - net
+    healthcheck:
+      test: redis-cli ping
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
 
 
@@ -60,7 +68,13 @@ services:
       - ./services:/services
     links:
       - redis
+    healthcheck:
+      test: celery -A services.celery_app status
+      interval: 10s
+      timeout: 10s
+      retries: 5
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     networks:
       - net
