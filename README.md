@@ -12,7 +12,7 @@ Endpoints
 с запросом body по формату
 ```json
 {
-  "file": form_file
+  "file": "form_file"
 }
 ```
 
