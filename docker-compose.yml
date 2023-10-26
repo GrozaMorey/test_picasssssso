@@ -1,0 +1,66 @@
+version: "3.9"
+
+networks:
+  net:
+
+volumes:
+  postgres:
+
+services:
+  web:
+    build:
+      context: ./services
+      dockerfile: ./Dockerfile
+    command: ash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    env_file:
+      - services/.env
+    volumes:
+      - ./services:/services
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - net
+
+  db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: postgres
+    networks:
+      - net
+    expose:
+      - 5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: psql -U postgres -c 'select 1;'
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    hostname: redis
+    networks:
+      - net
+
+
+
+  worker:
+    build:
+      context: services
+    hostname: worker
+    entrypoint: celery
+    command: -A services.celery_app worker --loglevel=info
+    volumes:
+      - ./services:/services
+    links:
+      - redis
+    depends_on:
+      - redis
+    networks:
+      - net
